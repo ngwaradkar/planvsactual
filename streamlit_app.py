@@ -2,49 +2,62 @@ import streamlit as st
 import streamlit.components.v1 as components
 import os
 
-# Set page config for mobile-first feel
+# Ultra-clean mobile-first industrial dashboard wrapper
 st.set_page_config(
-    page_title="Plan Vs Actual - Command Center",
+    page_title="Command Center",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
 
-# Custom CSS to remove streamlit padding and header/footer for a full-screen app feel
+# Force-remove all streamlit UI elements for a native app experience
 st.markdown("""
     <style>
-        .reportview-container .main .block-container {
-            padding: 0;
-            max-width: 100%;
+        /* Hide all Streamlit junk */
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        header {visibility: hidden;}
+        .stDeployButton {display:none;}
+        [data-testid="stHeader"] {display:none;}
+        
+        /* Remove paddings */
+        .main .block-container {
+            padding: 0px !important;
+            margin: 0px !important;
+            max-width: 100% !important;
         }
-        header, footer {
-            visibility: hidden;
-            display: none !important;
-        }
-        #MainMenu { 
-            visibility: hidden; 
-        }
-        /* Mobile optimization for the component container */
+        
+        /* Ensure the iframe fills the viewport correctly */
         iframe {
-            border: none;
-            width: 100vw;
+            border: none !important;
+            width: 100% !important;
+            display: block;
+        }
+        
+        /* Custom scrollbar for a premium feel */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
         }
     </style>
 """, unsafe_allow_html=True)
 
 def main():
-    # Path to the bundled React app
     html_path = "index.html"
     
     if os.path.exists(html_path):
         with open(html_path, "r", encoding="utf-8") as f:
             html_content = f.read()
             
-        # Display the React App
-        # height=2400 to match Mi 11i aspect ratio and prevent internal scrolling
-        components.html(html_content, height=2400, scrolling=True)
+        # We use a height that generally fits mobile viewports without vertical streamlit scrolling.
+        # 95vh is used to account for mobile browser bars.
+        components.html(
+            html_content, 
+            height=850, # Set to a height that fits most mobile screens perfectly
+            scrolling=False # Let React handle internal scrolling
+        )
     else:
-        st.error("Application build not found. Please run 'npm run build' first.")
+        st.error("Build 'index.html' not found. Please upload to the root directory.")
 
 if __name__ == "__main__":
     main()
