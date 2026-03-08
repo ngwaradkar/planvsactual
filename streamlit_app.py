@@ -2,7 +2,6 @@ import streamlit as st
 import streamlit.components.v1 as components
 import os
 
-# Ultra-clean mobile-first industrial dashboard wrapper
 st.set_page_config(
     page_title="Command Center",
     page_icon="📊",
@@ -10,54 +9,54 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# Force-remove all streamlit UI elements for a native app experience
 st.markdown("""
     <style>
-        /* Hide all Streamlit junk */
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
         header {visibility: hidden;}
         .stDeployButton {display:none;}
         [data-testid="stHeader"] {display:none;}
         
-        /* Remove paddings */
+        /* Remove body scrolling */
+        body {
+            overflow: hidden !important;
+            margin: 0;
+            padding: 0;
+        }
+        
         .main .block-container {
             padding: 0px !important;
             margin: 0px !important;
             max-width: 100% !important;
         }
         
-        /* Ensure the iframe fills the viewport correctly */
+        /* Ensure the iframe fills the viewport exactly like a native app */
         iframe {
             border: none !important;
-            width: 100% !important;
-            display: block;
-        }
-        
-        /* Custom scrollbar for a premium feel */
-        ::-webkit-scrollbar {
-            width: 0px;
-            background: transparent;
+            width: 100vw !important;
+            height: 100vh !important;
+            display: block !important;
+            position: fixed !important;
+            top: 0;
+            left: 0;
+            z-index: 999999;
         }
     </style>
 """, unsafe_allow_html=True)
 
 def main():
     html_path = "index.html"
-    
     if os.path.exists(html_path):
         with open(html_path, "r", encoding="utf-8") as f:
             html_content = f.read()
             
-        # We use a height that generally fits mobile viewports without vertical streamlit scrolling.
-        # 95vh is used to account for mobile browser bars.
         components.html(
             html_content, 
-            height=850, # Set to a height that fits most mobile screens perfectly
-            scrolling=False # Let React handle internal scrolling
+            height=1000, # A dummy number since CSS overrides it completely
+            scrolling=False
         )
     else:
-        st.error("Build 'index.html' not found. Please upload to the root directory.")
+        st.error("Build 'index.html' not found.")
 
 if __name__ == "__main__":
     main()
